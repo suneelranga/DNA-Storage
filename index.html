@@ -144,6 +144,50 @@
             <h3>Decoded Text:</h3>
             <pre id="decodedText"></pre>
         </div>
+
+        <div class="illustration">
+            <h3>Illustration of the Encoding/Decoding Process</h3>
+            <div class="step">
+                <div class="step-title">1. Text to Binary</div>
+                <p>Each character in the text is converted to its ASCII value, which is then transformed into an 8-bit binary string. Example:</p>
+                <pre>
+Character: A
+ASCII: 65
+Binary: 01000001
+                </pre>
+            </div>
+            <div class="step">
+                <div class="step-title">2. Binary to DNA</div>
+                <p>The binary string is split into pairs of two bits and each pair is mapped to a DNA base:</p>
+                <table id="basePairsTable">
+                    <thead>
+                        <tr>
+                            <th>Binary Pair</th>
+                            <th>DNA Base</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>00</td><td>A</td></tr>
+                        <tr><td>01</td><td>C</td></tr>
+                        <tr><td>10</td><td>G</td></tr>
+                        <tr><td>11</td><td>T</td></tr>
+                    </tbody>
+                </table>
+                <pre>
+Binary: 01000001
+DNA: CAG
+                </pre>
+            </div>
+            <div class="step">
+                <div class="step-title">3. DNA to Binary and Decoding</div>
+                <p>The DNA sequence is converted back to a binary string, which is then grouped into 8-bit segments to decode back to characters:</p>
+                <pre>
+DNA: CAG
+Binary: 01000001
+Character: A
+                </pre>
+            </div>
+        </div>
     </div>
     <script>
         const binaryToDNAMap = {
