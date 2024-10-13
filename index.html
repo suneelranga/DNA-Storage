@@ -91,6 +91,9 @@
             padding: 10px;
             border-radius: 4px;
             white-space: pre-wrap; /* Allow wrapping in preformatted text */
+            word-wrap: break-word; /* Prevent overflow */
+            overflow: auto; /* Add scrollbar if needed */
+            max-height: 100px; /* Limit height to prevent overflow */
         }
 
         .dna-pair {
@@ -140,7 +143,7 @@
         <h2>Results</h2>
         <div id="resultContainer">
             <h3>Encoded DNA:</h3>
-            <p id="encodedDNA"></p>
+            <pre id="encodedDNA" style="overflow-wrap: break-word;"></pre>
             <h3>Decoded Text:</h3>
             <p id="decodedText"></p>
         </div>
@@ -149,7 +152,7 @@
         <div class="illustration" id="logicIllustration">
             <h3>Encoding Process</h3>
             <div id="encodingStepsContainer"></div>
-            <p><strong>Final DNA Sequence:</strong> <code id="finalDNA"></code></p>
+            <p><strong>Final DNA Sequence:</strong> <pre id="finalDNA" style="overflow-wrap: break-word;"></pre></p>
 
             <h3>DNA Base Default Values</h3>
             <table id="dnaBaseTable">
@@ -255,16 +258,14 @@
             const decodingStepsContainer = document.getElementById('decodingStepsContainer');
             decodingStepsContainer.innerHTML = decodingSteps.map(step => `<div class="step"><span class="step-title">${step}</span></div>`).join('');
 
-            document.getElementById('finalDecodedText').innerText = decodedString;
-
             return decodedString;
         }
 
-        // Adding event listeners to buttons
+        // Event listeners for buttons
         document.getElementById('encodeButton').addEventListener('click', () => {
             const inputText = document.getElementById('inputText').value;
-            const encodedDNA = encodeToDNA(inputText);
-            document.getElementById('encodedDNA').innerText = encodedDNA;
+            const dnaSequence = encodeToDNA(inputText);
+            document.getElementById('encodedDNA').innerText = dnaSequence;
         });
 
         document.getElementById('decodeButton').addEventListener('click', () => {
