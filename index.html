@@ -145,13 +145,37 @@
             <p><strong>Final DNA Sequence:</strong> <code id="finalDNA"></code></p>
 
             <h3>DNA Base Default Values</h3>
-            <pre>
-                Binary Pair  →  DNA Base
-                00           →  A (Adenine)
-                01           →  C (Cytosine)
-                10           →  G (Guanine)
-                11           →  T (Thymine)
-            </pre>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Binary Pair</th>
+                        <th>DNA Base</th>
+                        <th>Full Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>00</td>
+                        <td>A</td>
+                        <td>Adenine</td>
+                    </tr>
+                    <tr>
+                        <td>01</td>
+                        <td>C</td>
+                        <td>Cytosine</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>G</td>
+                        <td>Guanine</td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>T</td>
+                        <td>Thymine</td>
+                    </tr>
+                </tbody>
+            </table>
 
             <h3>DNA Pairs Mapping</h3>
             <table>
@@ -229,23 +253,22 @@
                 decodingSteps.push(`Binary: ${byte} | Character: ${String.fromCharCode(charCode)}`);
             }
 
-            document.getElementById('decodingStepsContainer').innerHTML = decodingSteps.map(step => `<div class="step"><span class="step-title">${step}</span></div>`).join('');
+            document.getElementById('decodingStepsContainer').innerHTML = decodingSteps.map(step => `<div class="step">${step}</div>`).join('');
             document.getElementById('finalDecodedText').innerText = decodedString;
 
             return decodedString;
         }
 
-        // Event listeners for buttons
+        // Event listeners for the buttons
         document.getElementById('encodeButton').addEventListener('click', () => {
             const inputText = document.getElementById('inputText').value;
             const encodedDNA = encodeToDNA(inputText);
             document.getElementById('encodedDNA').innerText = encodedDNA;
-            document.getElementById('decodedText').innerText = ''; // Clear decoded text
         });
 
         document.getElementById('decodeButton').addEventListener('click', () => {
-            const encodedDNA = document.getElementById('encodedDNA').innerText;
-            const decodedText = decodeFromDNA(encodedDNA);
+            const dnaSequence = document.getElementById('encodedDNA').innerText;
+            const decodedText = decodeFromDNA(dnaSequence);
             document.getElementById('decodedText').innerText = decodedText;
         });
     </script>
