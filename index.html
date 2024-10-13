@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA Encoder/Decoder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        #resultContainer {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+
+        p {
+            margin: 5px 0;
+        }
+
+        .illustration {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+
+        .illustration h3 {
+            margin-top: 0;
+        }
+
+        .illustration ol {
+            margin-left: 20px;
+        }
+
+        .illustration pre {
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .dna-pair {
+            font-weight: bold;
+        }
+
+        #basePairsTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        #basePairsTable th, #basePairsTable td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #basePairsTable th {
+            background-color: #f2f2f2;
+        }
+
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            background-color: #e7f1ff;
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DNA Encoder/Decoder</h1>
+        
+        <h2>Step 1: Enter Text</h2>
+        <textarea id="inputText" placeholder="Enter text here..."></textarea>
+        <button id="encodeButton">Encode to DNA</button>
+        <button id="decodeButton">Decode DNA</button>
+        
+        <h2>Results</h2>
+        <div id="resultContainer">
+            <h3>Encoded DNA:</h3>
+            <p id="encodedDNA"></p>
+            <h3>Decoded Text:</h3>
+            <p id="decodedText"></p>
+        </div>
+
+        <h2>Illustration of Logic</h2>
+        <div class="illustration" id="logicIllustration">
+            <h3>Encoding Process</h3>
+            <div id="encodingStepsContainer"></div>
+            <p><strong>Final DNA Sequence:</strong> <code id="finalDNA"></code></p>
+
+            <h3>DNA Base Default Values</h3>
+            <pre>
+                Binary Pair  →  DNA Base
+                00           →  A
+                01           →  C
+                10           →  G
+                11           →  T
+            </pre>
+
+            <h3>DNA Pairs Mapping</h3>
+            <table id="basePairsTable">
+                <thead>
+                    <tr>
+                        <th>Binary Pair</th>
+                        <th>DNA Base</th>
+                    </tr>
+                </thead>
+                <tbody id="basePairsMapping"></tbody>
+            </table>
+
+            <h3>Decoding Process</h3>
+            <div id="decodingStepsContainer"></div>
+            <p><strong>Final Decoded Text:</strong> <code id="finalDecodedText"></code></p>
+        </div>
+    </div>
+    <script>
+        // Mapping for DNA encoding and decoding
+        const binaryToDNAMap = {
+            '00': 'A',
+            '01': 'C',
+            '10': 'G',
+            '11': 'T'
+        };
+
+        const DNAToBinaryMap = {
+            'A': '00',
+            'C': '01',
+            'G': '10',
+            'T': '11'
+        };
+
+        // Function to encode a string to DNA
+        function encodeToDNA(input) {
+            let binaryString = '';
+            let basePairsMapping = '';
+
+            // Convert each character to its ASCII binary representation
+            const encodingSteps = input.split('').map(char => {
+                const ascii = char.charCodeAt(0);
+                const binary = ascii.toString(2).padStart(8, '0'); // 8 bits
+                binaryString += binary;
+                return `Character: ${char} | ASCII: ${ascii} | Binary: ${binary}`;
+            });
+
+            // Split binary string into pairs and convert to DNA bases
+            let dnaSequence = '';
+            for (let i = 0; i < binaryString.length; i += 2) {
+                const pair = binaryString.substr(i, 2);
+                const dnaBase = binaryToDNAMap[pair];
+                dnaSequence += dnaBase;
+                basePairsMapping += `<tr><td>${pair}</td><td>${dnaBase}</td></tr>`;
+            }
+            
+            // Display encoding steps
+            const encodingStepsContainer = document.getElementById('encodingStepsContainer');
+            encodingStepsContainer.innerHTML = encodingSteps.map(step => `<div class="step"><span class="step-title">${step}</span></div>`).join('');
+
+            document.getElementById('finalDNA').innerText = dnaSequence;
+            document.getElementById('basePairsMapping').innerHTML = basePairsMapping;
+
+            return dnaSequence;
+        }
+
+        // Function to decode a DNA sequence back to string
+        function decodeFromDNA(dnaSequence) {
+            let binaryString = '';
+            const decodingSteps = [];
+
+            // Convert DNA bases back to binary pairs
+            for (let base of dnaSequence) {
+                binaryString += DNAToBinaryMap[base];
+            }
+
+            // Split the binary string into 8-bit segments and convert to characters
+            let decodedString = '';
+            for (let i = 0; i < binaryString.length; i += 8) {
+                const byte = binaryString.substr(i, 8);
+                const charCode = parseInt(byte, 2);
+                decodedString += String.fromCharCode(charCode);
+                decodingSteps.push(`Binary: ${byte} | Character: ${String.fromCharCode(charCode)}`);
+            }
+
+            // Display decoding steps
+            const decodingStepsContainer = document.getElementById('decodingStepsContainer');
+            decodingStepsContainer.innerHTML = decodingSteps.map(step => `<div class="step"><span class="step-title">${step}</span></div>`).join('');
+
+            document.getElementById('finalDecodedText').innerText = decodedString;
+
+            return decodedString;
+        }
+
+        // Adding event listeners to buttons
+        document.getElementById('encodeButton').addEventListener('click', () => {
+            const inputText = document.getElementById('inputText').value;
+            const encodedDNA = encodeToDNA(inputText);
+            document.getElementById('encodedDNA').innerText = encodedDNA;
+            document.getElementById('decodedText').innerText = ''; // Clear decoded text
+        });
+
+        document.getElementById('decodeButton').addEventListener('click', () => {
+            const encodedDNA = document.getElementById('encodedDNA').innerText;
+            const decodedText = decodeFromDNA(encodedDNA);
+            document.getElementById('decodedText').innerText = decodedText;
+        });
+    </script>
+</body>
+</html>
