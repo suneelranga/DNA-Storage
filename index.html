@@ -92,7 +92,9 @@
             border-radius: 4px;
             white-space: pre-wrap; /* Allow wrapping in preformatted text */
             word-wrap: break-word; /* Prevent overflow */
+            overflow-wrap: break-word; /* Add support for breaking long words */
             overflow: auto; /* Add scrollbar if needed */
+            max-height: 150px; /* Set a maximum height to limit overflow */
         }
 
         .dna-pair {
