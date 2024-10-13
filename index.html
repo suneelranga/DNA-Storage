@@ -11,7 +11,6 @@
             color: #333;
             margin: 0;
             padding: 20px;
-            overflow-x: hidden; /* Prevent horizontal overflow */
         }
 
         .container {
@@ -35,7 +34,6 @@
             border-radius: 4px;
             padding: 10px;
             font-size: 16px;
-            resize: vertical; /* Allow vertical resizing only */
         }
 
         button {
@@ -66,8 +64,16 @@
             background: #f9f9f9;
         }
 
-        p {
-            margin: 5px 0;
+        #encodedDNA, #decodedText {
+            max-height: 150px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            background: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-top: 5px;
         }
 
         .illustration {
@@ -86,36 +92,25 @@
             margin-left: 20px;
         }
 
-        /* Styles for encoded and decoded text */
-        .encoded-decoded {
-            white-space: pre-wrap; /* Allow wrapping in preformatted text */
-            word-wrap: break-word; /* Prevent overflow */
-            overflow-wrap: break-word; /* Add support for breaking long words */
-            max-height: 150px; /* Set a maximum height to limit overflow */
-            overflow-y: auto; /* Add vertical scrollbar if needed */
-            background-color: #eee; /* Light background for visibility */
+        .illustration pre {
+            background-color: #eee;
             padding: 10px;
             border-radius: 4px;
         }
 
-        .dna-pair {
-            font-weight: bold;
-        }
-
-        #basePairsTable, #dnaBaseTable {
+        #basePairsTable {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
         }
 
-        #basePairsTable th, #dnaBaseTable th,
-        #basePairsTable td, #dnaBaseTable td {
+        #basePairsTable th, #basePairsTable td {
             border: 1px solid #ccc;
             padding: 8px;
             text-align: center;
         }
 
-        #basePairsTable th, #dnaBaseTable th {
+        #basePairsTable th {
             background-color: #f2f2f2;
         }
 
@@ -145,52 +140,12 @@
         <h2>Results</h2>
         <div id="resultContainer">
             <h3>Encoded DNA:</h3>
-            <pre id="encodedDNA" class="encoded-decoded"></pre>
+            <pre id="encodedDNA"></pre>
             <h3>Decoded Text:</h3>
-            <pre id="decodedText" class="encoded-decoded"></pre>
-        </div>
-
-        <h2>Illustration of Logic</h2>
-        <div class="illustration" id="logicIllustration">
-            <h3>Encoding Process</h3>
-            <div id="encodingStepsContainer"></div>
-            <p><strong>Final DNA Sequence:</strong> <code id="finalDNA"></code></p>
-
-            <h3>DNA Base Default Values</h3>
-            <table id="dnaBaseTable">
-                <thead>
-                    <tr>
-                        <th>Binary Pair</th>
-                        <th>DNA Base</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>00</td><td>A</td></tr>
-                    <tr><td>01</td><td>C</td></tr>
-                    <tr><td>10</td><td>G</td></tr>
-                    <tr><td>11</td><td>T</td></tr>
-                </tbody>
-            </table>
-
-            <h3>DNA Pairs Mapping</h3>
-            <table id="basePairsTable">
-                <thead>
-                    <tr>
-                        <th>Binary Pair</th>
-                        <th>DNA Base</th>
-                    </tr>
-                </thead>
-                <tbody id="basePairsMapping"></tbody>
-            </table>
-
-            <h3>Decoding Process</h3>
-            <div id="decodingStepsContainer"></div>
-            <p><strong>Final Decoded Text:</strong> <code id="finalDecodedText"></code></p>
+            <pre id="decodedText"></pre>
         </div>
     </div>
-
     <script>
-        // Mapping for DNA encoding and decoding
         const binaryToDNAMap = {
             '00': 'A',
             '01': 'C',
@@ -205,71 +160,43 @@
             'T': '11'
         };
 
-        // Function to encode a string to DNA
         function encodeToDNA(input) {
             let binaryString = '';
-            let basePairsMapping = '';
-
-            // Convert each character to its ASCII binary representation
-            const encodingSteps = input.split('').map(char => {
+            input.split('').forEach(char => {
                 const ascii = char.charCodeAt(0);
-                const binary = ascii.toString(2).padStart(8, '0'); // 8 bits
+                const binary = ascii.toString(2).padStart(8, '0');
                 binaryString += binary;
-                return `Character: ${char} | ASCII: ${ascii} | Binary: ${binary}`;
             });
 
-            // Split binary string into pairs and convert to DNA bases
             let dnaSequence = '';
             for (let i = 0; i < binaryString.length; i += 2) {
                 const pair = binaryString.substr(i, 2);
-                const dnaBase = binaryToDNAMap[pair];
-                dnaSequence += dnaBase;
-                basePairsMapping += `<tr><td>${pair}</td><td>${dnaBase}</td></tr>`;
+                dnaSequence += binaryToDNAMap[pair] || '';
             }
-            
-            // Display encoding steps
-            const encodingStepsContainer = document.getElementById('encodingStepsContainer');
-            encodingStepsContainer.innerHTML = encodingSteps.map(step => `<div class="step"><span class="step-title">${step}</span></div>`).join('');
-
-            document.getElementById('finalDNA').innerText = dnaSequence;
-            document.getElementById('basePairsMapping').innerHTML = basePairsMapping;
 
             return dnaSequence;
         }
 
-        // Function to decode a DNA sequence back to string
         function decodeFromDNA(dnaSequence) {
             let binaryString = '';
-            const decodingSteps = [];
+            dnaSequence.split('').forEach(base => {
+                binaryString += DNAToBinaryMap[base] || '';
+            });
 
-            // Convert DNA bases back to binary pairs
-            for (let base of dnaSequence) {
-                binaryString += DNAToBinaryMap[base];
-            }
-
-            // Split the binary string into 8-bit segments and convert to characters
             let decodedString = '';
             for (let i = 0; i < binaryString.length; i += 8) {
                 const byte = binaryString.substr(i, 8);
-                const charCode = parseInt(byte, 2);
-                decodedString += String.fromCharCode(charCode);
-                decodingSteps.push(`Binary: ${byte} | Character: ${String.fromCharCode(charCode)}`);
+                decodedString += String.fromCharCode(parseInt(byte, 2));
             }
-
-            // Display decoding steps
-            const decodingStepsContainer = document.getElementById('decodingStepsContainer');
-            decodingStepsContainer.innerHTML = decodingSteps.map(step => `<div class="step"><span class="step-title">${step}</span></div>`).join('');
-
-            document.getElementById('finalDecodedText').innerText = decodedString;
 
             return decodedString;
         }
 
-        // Event listeners for buttons
         document.getElementById('encodeButton').addEventListener('click', () => {
             const inputText = document.getElementById('inputText').value;
             const encodedDNA = encodeToDNA(inputText);
             document.getElementById('encodedDNA').textContent = encodedDNA;
+            document.getElementById('decodedText').textContent = ''; 
         });
 
         document.getElementById('decodeButton').addEventListener('click', () => {
