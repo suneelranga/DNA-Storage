@@ -86,15 +86,16 @@
             margin-left: 20px;
         }
 
-        .illustration pre {
-            background-color: #eee;
-            padding: 10px;
-            border-radius: 4px;
+        /* Styles for encoded and decoded text */
+        .encoded-decoded {
             white-space: pre-wrap; /* Allow wrapping in preformatted text */
             word-wrap: break-word; /* Prevent overflow */
             overflow-wrap: break-word; /* Add support for breaking long words */
-            overflow: auto; /* Add scrollbar if needed */
             max-height: 150px; /* Set a maximum height to limit overflow */
+            overflow-y: auto; /* Add vertical scrollbar if needed */
+            background-color: #eee; /* Light background for visibility */
+            padding: 10px;
+            border-radius: 4px;
         }
 
         .dna-pair {
@@ -144,31 +145,30 @@
         <h2>Results</h2>
         <div id="resultContainer">
             <h3>Encoded DNA:</h3>
-            <pre id="encodedDNA"></pre>
+            <pre id="encodedDNA" class="encoded-decoded"></pre>
             <h3>Decoded Text:</h3>
-            <p id="decodedText"></p>
+            <pre id="decodedText" class="encoded-decoded"></pre>
         </div>
 
         <h2>Illustration of Logic</h2>
         <div class="illustration" id="logicIllustration">
             <h3>Encoding Process</h3>
             <div id="encodingStepsContainer"></div>
-            <p><strong>Final DNA Sequence:</strong> <pre id="finalDNA"></pre></p>
+            <p><strong>Final DNA Sequence:</strong> <code id="finalDNA"></code></p>
 
             <h3>DNA Base Default Values</h3>
             <table id="dnaBaseTable">
                 <thead>
                     <tr>
+                        <th>Binary Pair</th>
                         <th>DNA Base</th>
-                        <th>Value</th>
-                        <th>Name</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>A</td><td>00</td><td>Adenine</td></tr>
-                    <tr><td>C</td><td>01</td><td>Cytosine</td></tr>
-                    <tr><td>G</td><td>10</td><td>Guanine</td></tr>
-                    <tr><td>T</td><td>11</td><td>Thymine</td></tr>
+                    <tr><td>00</td><td>A</td></tr>
+                    <tr><td>01</td><td>C</td></tr>
+                    <tr><td>10</td><td>G</td></tr>
+                    <tr><td>11</td><td>T</td></tr>
                 </tbody>
             </table>
 
@@ -188,6 +188,7 @@
             <p><strong>Final Decoded Text:</strong> <code id="finalDecodedText"></code></p>
         </div>
     </div>
+
     <script>
         // Mapping for DNA encoding and decoding
         const binaryToDNAMap = {
@@ -259,22 +260,22 @@
             const decodingStepsContainer = document.getElementById('decodingStepsContainer');
             decodingStepsContainer.innerHTML = decodingSteps.map(step => `<div class="step"><span class="step-title">${step}</span></div>`).join('');
 
-            // Show the final decoded text
             document.getElementById('finalDecodedText').innerText = decodedString;
+
             return decodedString;
         }
 
         // Event listeners for buttons
         document.getElementById('encodeButton').addEventListener('click', () => {
             const inputText = document.getElementById('inputText').value;
-            const dnaSequence = encodeToDNA(inputText);
-            document.getElementById('encodedDNA').innerText = dnaSequence;
+            const encodedDNA = encodeToDNA(inputText);
+            document.getElementById('encodedDNA').textContent = encodedDNA;
         });
 
         document.getElementById('decodeButton').addEventListener('click', () => {
-            const dnaSequence = document.getElementById('encodedDNA').innerText;
+            const dnaSequence = document.getElementById('encodedDNA').textContent;
             const decodedText = decodeFromDNA(dnaSequence);
-            document.getElementById('decodedText').innerText = decodedText;
+            document.getElementById('decodedText').textContent = decodedText;
         });
     </script>
 </body>
