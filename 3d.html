@@ -96,7 +96,10 @@
         <div id="dnaVisualizationContainer"></div>
     </div>
 
+    <!-- Load Three.js and OrbitControls -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
+    
     <script>
         const binaryToDNAMap = {
             '00': 'A',
@@ -115,8 +118,6 @@
         // Function to encode a string to DNA
         function encodeToDNA(input) {
             let binaryString = '';
-            let basePairsMapping = '';
-
             input.split('').forEach(char => {
                 const ascii = char.charCodeAt(0);
                 const binary = ascii.toString(2).padStart(8, '0');
@@ -131,7 +132,7 @@
             }
 
             document.getElementById('encodedDNA').innerText = dnaSequence;
-            visualizeDNA(dnaSequence); // Call visualization function with the DNA sequence
+            visualizeDNA(dnaSequence);
 
             return dnaSequence;
         }
@@ -176,6 +177,11 @@
             const renderer = new THREE.WebGLRenderer();
             renderer.setSize(container.clientWidth, container.clientHeight);
             container.appendChild(renderer.domElement);
+
+            const controls = new THREE.OrbitControls(camera, renderer.domElement); // Enable OrbitControls
+            controls.enableZoom = true;  // Enable zooming
+            controls.enablePan = true;   // Enable panning
+            controls.enableRotate = true; // Enable rotating
 
             const helixRadius = 5;
             const helixHeight = 0.8;
@@ -238,7 +244,7 @@
                 switch (base) {
                     case 'A': return 0xff0000; // Red
                     case 'T': return 0x00ff00; // Green
-                    case 'C': return 0x0000ff; // Blue
+                    case 'C': return 0x007bff; // Blue
                     case 'G': return 0xffff00; // Yellow
                     default: return 0xffffff; // White
                 }
@@ -252,6 +258,7 @@
             function animate() {
                 requestAnimationFrame(animate);
                 dnaHelix.rotation.y += 0.01;
+                controls.update();  // Update controls
                 renderer.render(scene, camera);
             }
 
