@@ -69,6 +69,7 @@
             width: 100%;
             height: 500px;
             margin-top: 20px;
+            position: relative;
         }
 
         canvas {
@@ -174,14 +175,14 @@
 
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer();
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
             container.appendChild(renderer.domElement);
 
-            const controls = new THREE.OrbitControls(camera, renderer.domElement); // Enable OrbitControls
-            controls.enableZoom = true;  // Enable zooming
-            controls.enablePan = true;   // Enable panning
-            controls.enableRotate = true; // Enable rotating
+            const controls = new THREE.OrbitControls(camera, renderer.domElement); 
+            controls.enableZoom = true;  
+            controls.enablePan = true;   
+            controls.enableRotate = true; 
 
             const helixRadius = 5;
             const helixHeight = 0.8;
@@ -253,12 +254,28 @@
             const dnaHelix = createDNAHelix(sequence);
             scene.add(dnaHelix);
 
-            camera.position.z = 20;
+            // Adjust camera position based on sequence length
+            const boundingBox = new THREE.Box3().setFromObject(dnaHelix);
+            const size = new THREE.Vector3();
+            boundingBox.getSize(size);
+
+            // Set camera to fit the entire helix and center it
+            const center = boundingBox.getCenter(new THREE.Vector3());
+            camera.position.set(center.x, center.y + size.y / 2, Math.max(size.x, size.y, size.z) * 1.5);
+            camera.lookAt(center);
+
+            // Resize the renderer and camera on window resize
+            window.addEventListener('resize', () => {
+                const width = container.clientWidth;
+                const height = container.clientHeight;
+                renderer.setSize(width, height);
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+            });
 
             function animate() {
                 requestAnimationFrame(animate);
-                dnaHelix.rotation.y += 0.01;
-                controls.update();  // Update controls
+                controls.update();
                 renderer.render(scene, camera);
             }
 
