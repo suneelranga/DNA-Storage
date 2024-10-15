@@ -116,7 +116,6 @@
             'T': '11'
         };
 
-        // Function to encode a string to DNA
         function encodeToDNA(input) {
             let binaryString = '';
             input.split('').forEach(char => {
@@ -138,7 +137,6 @@
             return dnaSequence;
         }
 
-        // Function to decode a DNA sequence back to text
         function decodeFromDNA(dnaSequence) {
             let binaryString = '';
 
@@ -157,7 +155,6 @@
             return decodedString;
         }
 
-        // Event listeners for the buttons
         document.getElementById('encodeButton').addEventListener('click', () => {
             const inputText = document.getElementById('inputText').value;
             encodeToDNA(inputText);
@@ -168,10 +165,9 @@
             decodeFromDNA(dnaSequence);
         });
 
-        // DNA Visualization with Three.js
         function visualizeDNA(sequence) {
             const container = document.getElementById('dnaVisualizationContainer');
-            container.innerHTML = ''; // Clear previous visualization
+            container.innerHTML = '';
 
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
@@ -179,10 +175,10 @@
             renderer.setSize(container.clientWidth, container.clientHeight);
             container.appendChild(renderer.domElement);
 
-            const controls = new THREE.OrbitControls(camera, renderer.domElement); 
-            controls.enableZoom = true;  
-            controls.enablePan = true;   
-            controls.enableRotate = true; 
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableZoom = true;
+            controls.enablePan = true;
+            controls.enableRotate = true;
 
             const helixRadius = 5;
             const helixHeight = 0.8;
@@ -200,13 +196,11 @@
                     const pair = getPair(base);
                     const baseColor = getColor(base);
 
-                    // Create spheres for bases
                     const baseGeometry = new THREE.SphereGeometry(0.2, 16, 16);
                     const baseMaterial = new THREE.MeshBasicMaterial({ color: baseColor });
                     const baseSphere = new THREE.Mesh(baseGeometry, baseMaterial);
                     baseSphere.position.set(x, y, z);
 
-                    // Create spheres for paired bases on opposite side
                     const pairX = helixRadius * Math.cos(angle + Math.PI);
                     const pairZ = helixRadius * Math.sin(angle + Math.PI);
                     const pairColor = getColor(pair);
@@ -215,7 +209,6 @@
                     const pairSphere = new THREE.Mesh(baseGeometry, pairMaterial);
                     pairSphere.position.set(pairX, y, pairZ);
 
-                    // Connect the pair with a line
                     const lineGeometry = new THREE.BufferGeometry().setFromPoints([
                         new THREE.Vector3(x, y, z),
                         new THREE.Vector3(pairX, y, pairZ)
@@ -243,28 +236,29 @@
 
             function getColor(base) {
                 switch (base) {
-                    case 'A': return 0xff0000; // Red
-                    case 'T': return 0x00ff00; // Green
-                    case 'C': return 0x007bff; // Blue
-                    case 'G': return 0xffff00; // Yellow
-                    default: return 0xffffff; // White
+                    case 'A': return 0xff0000; 
+                    case 'T': return 0x00ff00; 
+                    case 'C': return 0x007bff; 
+                    case 'G': return 0xffff00; 
+                    default: return 0xffffff; 
                 }
             }
 
             const dnaHelix = createDNAHelix(sequence);
             scene.add(dnaHelix);
 
-            // Adjust camera position based on sequence length
             const boundingBox = new THREE.Box3().setFromObject(dnaHelix);
             const size = new THREE.Vector3();
             boundingBox.getSize(size);
-
-            // Set camera to fit the entire helix and center it
             const center = boundingBox.getCenter(new THREE.Vector3());
-            camera.position.set(center.x, center.y + size.y / 2, Math.max(size.x, size.y, size.z) * 1.5);
-            camera.lookAt(center);
 
-            // Resize the renderer and camera on window resize
+            dnaHelix.position.set(-center.x, -center.y, -center.z);
+            const maxDim = Math.max(size.x, size.y, size.z);
+
+            camera.position.set(0, 0, maxDim * 1.5); 
+            controls.target.set(0, 0, 0);
+            controls.update();
+
             window.addEventListener('resize', () => {
                 const width = container.clientWidth;
                 const height = container.clientHeight;
@@ -273,9 +267,11 @@
                 camera.updateProjectionMatrix();
             });
 
+            let autoRotate = 0.01;
+
             function animate() {
                 requestAnimationFrame(animate);
-                controls.update();
+                dnaHelix.rotation.y += autoRotate;
                 renderer.render(scene, camera);
             }
 
