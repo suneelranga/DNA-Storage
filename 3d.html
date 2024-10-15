@@ -82,8 +82,11 @@
         <h1>DNA Encoder/Decoder with 3D Visualization</h1>
         
         <h2>Step 1: Enter Text</h2>
-        <textarea id="inputText" placeholder="Enter text here..."></textarea>
+        <textarea id="inputText" placeholder="Enter text to encode..."></textarea>
         <button id="encodeButton">Encode to DNA</button>
+
+        <h2>Step 2: Enter DNA Sequence to Decode</h2>
+        <textarea id="inputDNA" placeholder="Enter DNA sequence to decode..."></textarea>
         <button id="decodeButton">Decode DNA</button>
         
         <h2>Results</h2>
@@ -138,8 +141,17 @@
         }
 
         function decodeFromDNA(dnaSequence) {
-            let binaryString = '';
+            if (!/^[ACGT]+$/.test(dnaSequence)) {
+                alert('Invalid DNA sequence for decoding. Please check the input.');
+                return;
+            }
 
+            if (dnaSequence.length % 4 !== 0) {
+                alert('The DNA sequence length should be a multiple of 4.');
+                return;
+            }
+
+            let binaryString = '';
             for (let base of dnaSequence) {
                 binaryString += DNAToBinaryMap[base];
             }
@@ -161,8 +173,12 @@
         });
 
         document.getElementById('decodeButton').addEventListener('click', () => {
-            const dnaSequence = document.getElementById('encodedDNA').innerText;
-            decodeFromDNA(dnaSequence);
+            const dnaSequence = document.getElementById('inputDNA').value.trim();
+            if (dnaSequence) {
+                decodeFromDNA(dnaSequence);
+            } else {
+                alert('Please enter a DNA sequence to decode.');
+            }
         });
 
         function visualizeDNA(sequence) {
@@ -251,13 +267,9 @@
             const size = new THREE.Vector3();
             boundingBox.getSize(size);
             const center = boundingBox.getCenter(new THREE.Vector3());
+            dnaHelix.position.sub(center);
 
-            dnaHelix.position.set(-center.x, -center.y, -center.z);
-            const maxDim = Math.max(size.x, size.y, size.z);
-
-            camera.position.set(0, 0, maxDim * 1.5); 
-            controls.target.set(0, 0, 0);
-            controls.update();
+            camera.position.z = size.length() * 0.8;
 
             window.addEventListener('resize', () => {
                 const width = container.clientWidth;
@@ -267,11 +279,8 @@
                 camera.updateProjectionMatrix();
             });
 
-            let autoRotate = 0.01;
-
             function animate() {
                 requestAnimationFrame(animate);
-                dnaHelix.rotation.y += autoRotate;
                 renderer.render(scene, camera);
             }
 
