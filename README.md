@@ -22,8 +22,12 @@ DNA storage is considered a future-ready solution for the exponential growth of 
 Experience the tool in action here: [DNA Storage Tool Live Demo](https://suneelranga.github.io/DNA-Storage-Tool/)
 
 ### How to Use the Tool
-1. **Encode Text to DNA**: Enter any text into the input field and click the "Encode to DNA" button. The tool will convert your input into a DNA sequence.
-2. **Decode DNA to Text**: Paste the DNA sequence into the decoder and click "Decode DNA" to see the original text.
+
+1. **Encode/Decode with Main Interface**: Access the encoding and decoding features here: [DNA Encoder/Decoder](https://suneelranga.github.io/DNA-Storage-Tool/index.html).
+   - Encode text into DNA sequences and decode DNA sequences back to text.
+
+2. **3D DNA Visualization**: Explore a dynamic 3D model of a DNA strand here: [DNA Encoder/Decoder with 3D Visualization](https://suneelranga.github.io/DNA-Storage-Tool/3d.html).
+   - Interact with the 3D model through various controls, including rotation and zoom.
 
 ### Features of the Project
 - **Responsive Design**: The tool is optimized for both desktop and mobile devices, ensuring a seamless user experience.
